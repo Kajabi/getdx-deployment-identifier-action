@@ -38,7 +38,7 @@ jobs:
 
 | Name                    | Description                                                                        | Required | Default                                  |
 | ----------------------- | ---------------------------------------------------------------------------------- | -------- | ---------------------------------------- |
-| `getdx-instance-name`   | Instance name for getdx (e.g. <instance-name>.getdx.net)                           | `true`   |                                          |
+| `getdx-instance-name`   | Instance name for getdx (e.g. {instance-name}.getdx.net)                           | `true`   |                                          |
 | `getx-token`            | Token for GetDX API Calls (use Github Secrets for security)                        | `true`   |                                          |
 | `service-name`          | The service in GetDX that this deployment is for                                   | `false`  |                                          |
 | `default-branch`        | The default branch for the repository                                              | `false`  | `main`                                   |

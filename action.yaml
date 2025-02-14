@@ -32,17 +32,22 @@ runs:
           sha=$(git rev-parse HEAD)
           ts=$(date +%s)
           repo=${{ github.repository }}
+          service_arg=""
+
+          if [ -n "${{ inputs.service-name }}" ]; then
+            service_arg="--arg service ${{ inputs.service-name }}"
+          fi
           
           json_payload=$(jq -n \
               --arg repo "$repo" \
               --arg sha "$sha" \
               --arg ts "$ts" \
-              $( [ -n "${{ inputs.service-name }}" ] && echo "--arg service \"${{ inputs.service-name }}\"" ) \
+              $service_arg \
               '{
                 repository: $repo,
                 commit_sha: $sha,
                 deployed_at: $ts
-              } + ( $service | select(length > 0) | { service: . } )')
+              } + ( $service | { service: . } )')
 
           if [ "${{ inputs.debug }}" == "true" ]; then
             echo "DEBUG: Debug is on so no API call will be made. Payload would be:"
@@ -61,7 +66,7 @@ runs:
               ERROR_MESSAGE=$(jq -r '.message' response.txt 2>/dev/null || echo "Unknown error") 
               ERROR_TYPE=$(jq -r '.error' response.txt 2>/dev/null || echo "Unknown error") 
 
-              echo "Error response from API: HTTP status code $RESPONSE"
+              echo "Error response from API: HTTP status code $RESPONSE_CODE"
               echo "Error type: $ERROR_TYPE" 
               echo "Error message: $ERROR_MESSAGE"
 

@@ -57,9 +57,9 @@ runs:
               -d "$json_payload"
             ) 
 
-            if [ "$RESPONSE" -ne 200 ]; then
-              ERROR_MESSAGE=$(jq -r '.message' response.txt) 
-              ERROR_TYPE=$(jq -r '.error' response.txt) 
+            if [ "$RESPONSE_CODE" -ne 200 ]; then
+              ERROR_MESSAGE=$(jq -r '.message' response.txt 2>/dev/null || echo "Unknown error") 
+              ERROR_TYPE=$(jq -r '.error' response.txt 2>/dev/null || echo "Unknown error") 
 
               echo "Error response from API: HTTP status code $RESPONSE"
               echo "Error type: $ERROR_TYPE" 

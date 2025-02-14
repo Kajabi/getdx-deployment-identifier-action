@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: getdx-deployment-identifier-action
+  description: |
+    Reusable action for sending deployment identifiers to GetDX.
+  annotations:
+    jira/project-key: IPA
+    backstage.io/source-location: url:https://github.com/Kajabi/getdx-deployment-identifier-action
+    backstage.io/techdocs-ref: url:https://github.com/Kajabi/getdx-deployment-identifier-action/tree/main
+    github.com/project-slug: Kajabi/getdx-deployment-identifier-action
+  tags:
+    - github
+    - action
+    - getdx
+    - deployment
+spec:
+  type: github-action
+  owner: internal-platform-and-automation
+  lifecycle: experimental

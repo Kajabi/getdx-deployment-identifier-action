@@ -1,0 +1,70 @@
+name: 'GetDX Deployment Identifier Action'
+description: |
+  Reusable action for sending deployment identifiers to GetDX.
+author: 'internal-platform-and-automation'
+
+inputs:
+  getdx-instance-name:
+    description: 'Instance name for getdx (e.g. <instance-name>.getdx.net)'
+    required: true
+  getdx-token:
+    description: 'Token for GetDX API Calls'
+    required: true
+  service-name:
+    description: 'Name of the service being deployed (optional)'
+    required: false
+  default-branch:
+    description: 'Default branch for the repository'
+    required: false
+    default: "main"
+  debug:
+    description: 'Enable debug mode'
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+      - name: Register deploy
+        shell: bash
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == '${{ inputs.default-branch }}'
+        run: |
+          sha=$(git rev-parse HEAD)
+          ts=$(date +%s)
+          repo=${{ github.repository }}
+          
+          json_payload=$(jq -n \
+              --arg repo "$repo" \
+              --arg sha "$sha" \
+              --arg ts "$ts" \
+              $( [ -n "${{ inputs.service-name }}" ] && echo "--arg service \"${{ inputs.service-name }}\"" ) \
+              '{
+                repository: $repo,
+                commit_sha: $sha,
+                deployed_at: $ts
+              } + ( $service | select(length > 0) | { service: . } )')
+
+          if [ "${{ inputs.debug }}" == "true" ]; then
+            echo "DEBUG: Debug is on so no API call will be made. Payload would be:"
+            echo "JSON_PAYLOAD: $json_payload"
+          else
+            RESPONSE_CODE=$(curl \
+              "https://${DATACLOUD_HOST}/api/deployments.create"\
+              -s -o response.txt\
+              -w "%{http_code}" -X POST \
+              -H "Authorization: Bearer ${API_TOKEN}" \
+              -H "Content-Type: application/json"       \
+              -d "$json_payload"
+            ) 
+
+            if [ "$RESPONSE" -ne 200 ]; then
+              ERROR_MESSAGE=$(jq -r '.message' response.txt) 
+              ERROR_TYPE=$(jq -r '.error' response.txt) 
+
+              echo "Error response from API: HTTP status code $RESPONSE"
+              echo "Error type: $ERROR_TYPE" 
+              echo "Error message: $ERROR_MESSAGE"
+
+              exit 1 # Fail the step explicitly if an error is detected 
+            fi
+          fi

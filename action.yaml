@@ -52,7 +52,7 @@ runs:
               "https://${{ inputs.getdx-instance-name }}.getdx.net/api/deployments.create"\
               -s -o response.txt\
               -w "%{http_code}" -X POST \
-              -H "Authorization: Bearer ${API_TOKEN}" \
+              -H "Authorization: Bearer ${{ inputs.getdx-token }}" \
               -H "Content-Type: application/json"       \
               -d "$json_payload"
             ) 

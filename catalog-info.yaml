@@ -14,6 +14,8 @@ metadata:
     - action
     - getdx
     - deployment
+    - oss
+    - open-source
 spec:
   type: github-action
   owner: internal-platform-and-automation

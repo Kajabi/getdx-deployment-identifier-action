@@ -1,7 +1,7 @@
 name: 'GetDX Deployment Identifier Action'
 description: |
   Reusable action for sending deployment identifiers to GetDX.
-author: 'internal-platform-and-automation'
+author: 'Kajabi'
 
 inputs:
   getdx-instance-name:

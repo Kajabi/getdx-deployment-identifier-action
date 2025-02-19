@@ -19,4 +19,4 @@ metadata:
 spec:
   type: github-action
   owner: internal-platform-and-automation
-  lifecycle: experimental
+  lifecycle: production

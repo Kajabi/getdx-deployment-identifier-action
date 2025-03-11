@@ -32,7 +32,12 @@ runs:
         shell: bash
         if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == '${{ inputs.default-branch }}'
         run: |
-          sha="${{ inputs.sha }:-$(git rev-parse HEAD)}"
+          if [ -n "${{ inputs.sha }}" ]; then
+            sha="${{ inputs.sha }}"
+          else
+            sha=$(git rev-parse HEAD)
+          fi
+
           ts=$(date +%s)
           repo=${{ github.repository }}
           service_arg=""

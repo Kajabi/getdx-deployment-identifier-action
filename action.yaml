@@ -10,6 +10,9 @@ inputs:
   getdx-token:
     description: 'Token for GetDX API Calls'
     required: true
+  sha:
+    description: 'SHA of the commit being deployed. Will use `git rev-parse HEAD` if not provided (optional)'
+    required: false
   service-name:
     description: 'Name of the service being deployed (optional)'
     required: false
@@ -29,7 +32,7 @@ runs:
         shell: bash
         if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == '${{ inputs.default-branch }}'
         run: |
-          sha=$(git rev-parse HEAD)
+          sha="${{ inputs.sha }:-$(git rev-parse HEAD)}"
           ts=$(date +%s)
           repo=${{ github.repository }}
           service_arg=""
@@ -37,7 +40,7 @@ runs:
           if [ -n "${{ inputs.service-name }}" ]; then
             service_arg="--arg service ${{ inputs.service-name }}"
           fi
-          
+
           json_payload=$(jq -n \
               --arg repo "$repo" \
               --arg sha "$sha" \
@@ -60,16 +63,16 @@ runs:
               -H "Authorization: Bearer ${{ inputs.getdx-token }}" \
               -H "Content-Type: application/json"       \
               -d "$json_payload"
-            ) 
+            )
 
             if [ "$RESPONSE_CODE" -ne 200 ]; then
-              ERROR_MESSAGE=$(jq -r '.message' response.txt 2>/dev/null || echo "Unknown error") 
-              ERROR_TYPE=$(jq -r '.error' response.txt 2>/dev/null || echo "Unknown error") 
+              ERROR_MESSAGE=$(jq -r '.message' response.txt 2>/dev/null || echo "Unknown error")
+              ERROR_TYPE=$(jq -r '.error' response.txt 2>/dev/null || echo "Unknown error")
 
               echo "Error response from API: HTTP status code $RESPONSE_CODE"
-              echo "Error type: $ERROR_TYPE" 
+              echo "Error type: $ERROR_TYPE"
               echo "Error message: $ERROR_MESSAGE"
 
-              exit 1 # Fail the step explicitly if an error is detected 
+              exit 1 # Fail the step explicitly if an error is detected
             fi
           fi

@@ -24,7 +24,7 @@ on:
 jobs:
   deploy:
     steps:
-      # All your deployment process steps, followed by: 
+      # All your deployment process steps, followed by:
       - name: Report production deployment to GetDX
         uses: Kajabi/getdx-deployment-identifier-action@main
         with:
@@ -40,6 +40,7 @@ jobs:
 | ----------------------- | ---------------------------------------------------------------------------------- | -------- | ---------------------------------------- |
 | `getdx-instance-name`   | Instance name for getdx (e.g. {instance-name}.getdx.net)                           | `true`   |                                          |
 | `getx-token`            | Token for GetDX API Calls (use Github Secrets for security)                        | `true`   |                                          |
+| `sha`                   | The SHA being deployed, will default to `git rev-parse HEAD` if not provided       | `false`  |                                          |
 | `service-name`          | The service in GetDX that this deployment is for                                   | `false`  |                                          |
 | `default-branch`        | The default branch for the repository                                              | `false`  | `main`                                   |
 | `debug`                 | Enable debug mode and don't send API requests                                      | `false`  | `false`                                  |
